@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1047285026633",
+    "project_id": "giftyhaus-16e65",
+    "storage_bucket": "giftyhaus-16e65.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1047285026633:android:4b4ead3c43e6aa9eff5498",
+        "android_client_info": {
+          "package_name": "com.example.giftyhaus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-LhZKf-o91Hb0CUXRY4NjCVFIciL4CdQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
