@@ -1,10 +1,11 @@
+package com.example.giftyhaus.ui.theme.screens.orders
+
 
 
 
 
 import OrderViewModel
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,13 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -98,8 +97,8 @@ fun ViewOrderScreen(navController: NavHostController){
 
 @Composable
 fun OrdersItem(items:String,totalAmount:String,date:String,
-                status: String,orderId:String,imageUrl: String,navController: NavHostController,
-                orderRepository: OrderViewModel
+               status: String,orderId:String,imageUrl: String,navController: NavHostController,
+               orderRepository: OrderViewModel
 ){
     val context = LocalContext.current
     Column (modifier = Modifier.fillMaxWidth()){
@@ -194,4 +193,3 @@ fun OrdersItem(items:String,totalAmount:String,date:String,
 fun ViewOrdersScreenPreview(){
     ViewOrderScreen(rememberNavController())
 }
-

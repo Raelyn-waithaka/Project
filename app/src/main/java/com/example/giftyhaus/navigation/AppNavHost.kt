@@ -1,7 +1,7 @@
 package com.example.giftyhaus.navigation
 
 import UpdateOrderScreen
-import ViewOrderScreen
+
 import com.example.giftyhaus.ui.theme.screens.home.HomeScreen
 import com.example.giftyhaus.ui.theme.screens.login.LoginScreen
 
@@ -14,6 +14,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.giftyhaus.ui.theme.screens.bars.TopBarUI
+import com.example.giftyhaus.ui.theme.screens.orders.AddProductScreen
+import com.example.giftyhaus.ui.theme.screens.orders.CategoryProductsScreen
+import com.example.giftyhaus.ui.theme.screens.orders.ViewOrderScreen
 import com.example.giftyhaus.ui.theme.screens.register.RegisterScreen
 import com.example.giftyhaus.ui.theme.screens.splashScreen.SplashScreen
 
@@ -30,15 +33,21 @@ fun AppNavHost(navController:NavHostController= rememberNavController(),startDes
             }
 
         }
+        composable("category_products/{category}") { backStackEntry ->
+            val category = backStackEntry.arguments?.getString("category") ?: ""
+            CategoryProductsScreen(category = category, navController = navController)
+        }
+
         composable (ROUTE_TOP_BAR) { TopBarUI() }
         composable ( ROUTE_REGISTER ){ RegisterScreen(navController) }
         composable(ROUTE_LOGIN) { LoginScreen(navController) }
-        composable(ROUTE_HOME) { HomeScreen(onProductClick = {},navController ) }
+        composable(ROUTE_ADD_PRODUCT) { AddProductScreen(navController) }
+        composable(ROUTE_HOME) { HomeScreen(navController ) }
         composable(ROUTE_VIEW_ORDERS) {
             ViewOrderScreen(
                 navController,
 
-            )
+                )
         }
         composable("$ROUTE_UPDATE_ORDERS/{orderId}") { passedData ->
             UpdateOrderScreen(

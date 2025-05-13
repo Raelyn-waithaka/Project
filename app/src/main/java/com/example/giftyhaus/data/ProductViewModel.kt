@@ -1,15 +1,19 @@
+package com.example.giftyhaus.data
+
 
 
 import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.giftyhaus.models.OrderModel
+import com.example.giftyhaus.models.ProductModel
+import com.example.giftyhaus.navigation.ROUTE_HOME
 import com.example.giftyhaus.navigation.ROUTE_VIEW_ORDERS
 import com.example.giftyhaus.network.ImgurService
 import com.google.firebase.database.DataSnapshot
@@ -27,10 +31,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-import kotlin.collections.isNotEmpty
 
-class OrderViewModel: ViewModel() {
-    private val database = FirebaseDatabase.getInstance().reference.child("Students")
+
+class ProductViewModel: ViewModel() {
+    private val database = FirebaseDatabase.getInstance().reference.child("Products")
 
     private fun getImgurService(): ImgurService {
         val logging = HttpLoggingInterceptor()
@@ -63,13 +67,13 @@ class OrderViewModel: ViewModel() {
             null
         }
     }
-    fun uploadOrderwithImage(
+    fun uploadProductwithImage(
         uri: Uri,
         context: Context,
-        items: String,
-        totalAmount: String,
-        status : String,
-        date : String,
+        name: String,
+        price: String,
+        description: String,
+        category: String,
         navController: NavController
     ) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -93,23 +97,22 @@ class OrderViewModel: ViewModel() {
                 if (response.isSuccessful) {
                     val imageUrl = response.body()?.data?.link ?: ""
 
-                    val orderId = database.push().key ?: ""
-                    val student = OrderModel(
-                        items, totalAmount,date, status, imageUrl, orderId
-                    )
+                    val productId = database.child(category).push().key ?: ""
+                    val product = ProductModel(name, price, description, imageUrl, productId,category)
 
-                    database.child(orderId).setValue(student)
+                    database.child(category).child(productId).setValue(product)
                         .addOnSuccessListener {
                             viewModelScope.launch {
                                 withContext(Dispatchers.Main) {
-                                    Toast.makeText(context, "Student saved successfully", Toast.LENGTH_SHORT).show()
-                                    navController.navigate(ROUTE_VIEW_ORDERS)
+                                    Toast.makeText(context, "Product saved successfully", Toast.LENGTH_SHORT).show()
+                                    navController.navigate(ROUTE_HOME)
                                 }
                             }
-                        }.addOnFailureListener {
+                        }
+                        .addOnFailureListener {
                             viewModelScope.launch {
                                 withContext(Dispatchers.Main) {
-                                    Toast.makeText(context, "Failed to save student", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Failed to save product", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -127,38 +130,34 @@ class OrderViewModel: ViewModel() {
             }
         }
     }
-    fun viewOrders(
-        order: MutableState<OrderModel>,
-        orders: SnapshotStateList<OrderModel>,
-        context: Context
-    ): SnapshotStateList<OrderModel> {
-        val ref = FirebaseDatabase.getInstance().getReference("Orders")
 
-        ref.addValueEventListener(object: ValueEventListener {
+    val categorizedProducts = mutableStateOf<Map<String, List<ProductModel>>>(emptyMap())
+
+    fun fetchProductsByCategory(
+        category: String,
+        products: SnapshotStateList<ProductModel>
+    ) {
+        val ref = FirebaseDatabase.getInstance().getReference("Products")
+        ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                orders.clear()
+                products.clear()
                 for (snap in snapshot.children) {
-                    val value = snap.getValue(OrderModel::class.java)
-                    value?.let {
-                        orders.add(it)
+                    val product = snap.getValue(ProductModel::class.java)
+                    if (product != null && product.category.equals(category, ignoreCase = true)) {
+                        products.add(product)
                     }
-                }
-                if (orders.isNotEmpty()) {
-                    order.value = orders.first()
+
                 }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, "Failed to fetch order: ${error.message}", Toast.LENGTH_SHORT).show()
-
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
-
-        return orders
     }
+
+
     fun updateOrder(context: Context, navController: NavController,
-                    items: String, totalAmount: String,
-                    date: String, status: String, orderId: String){
+                      items: String, totalAmount: String,
+                      date: String, status: String, orderId: String){
 
         val databaseReference = FirebaseDatabase.getInstance()
             .getReference("Orders/$orderId")
@@ -181,7 +180,7 @@ class OrderViewModel: ViewModel() {
                     navController: NavController){
         AlertDialog.Builder(context)
             .setTitle("Delete Order")
-            .setMessage("Are you sure you want to delete this order")
+            .setMessage("Are you sure you want to delete this order?")
             .setPositiveButton("Yes"){ _, _ ->
 
                 val databaseReference = FirebaseDatabase.getInstance()
