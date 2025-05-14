@@ -16,7 +16,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.giftyhaus.ui.theme.screens.bars.TopBarUI
 import com.example.giftyhaus.ui.theme.screens.orders.AddProductScreen
 import com.example.giftyhaus.ui.theme.screens.orders.CategoryProductsScreen
-import com.example.giftyhaus.ui.theme.screens.orders.ViewOrderScreen
+
+import com.example.giftyhaus.ui.theme.screens.products.ViewProductScreen
 import com.example.giftyhaus.ui.theme.screens.register.RegisterScreen
 import com.example.giftyhaus.ui.theme.screens.splashScreen.SplashScreen
 
@@ -44,12 +45,10 @@ fun AppNavHost(navController:NavHostController= rememberNavController(),startDes
         composable(ROUTE_ADD_PRODUCT) { AddProductScreen(navController) }
         composable(ROUTE_HOME) { HomeScreen(navController ) }
         composable(ROUTE_VIEW_ORDERS) {
-            ViewOrderScreen(
-                navController,
+            ViewProductScreen(navController)
 
-                )
         }
-        composable("$ROUTE_UPDATE_ORDERS/{orderId}") { passedData ->
+        composable("$ROUTE_UPDATE_PRODUCTS/{orderId}") { passedData ->
             UpdateOrderScreen(
                 navController.toString()
             )

@@ -11,6 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,11 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.giftyhaus.models.ProductModel
 import com.example.giftyhaus.navigation.ROUTE_ADD_PRODUCT
+import com.example.giftyhaus.navigation.ROUTE_VIEW_ORDERS
 import com.example.giftyhaus.navigation.navigateToCategory
 
 data class Category(val name: String, val imageRes: Int)
@@ -71,8 +75,6 @@ fun HomeScreen(navController: NavController) {
             }
         }
 
-
-        // Floating Action Button
         FloatingActionButton(
             onClick = { navController.navigate(ROUTE_ADD_PRODUCT) },
             modifier = Modifier
@@ -86,7 +88,18 @@ fun HomeScreen(navController: NavController) {
                 tint = Color.White
             )
         }
+//        Button(
+//            onClick = { navController.navigate(ROUTE_VIEW_ORDERS) },
+//            modifier = Modifier.padding(16.dp)
+//        ) {
+//            Text(text = "View Orders")
+//        }
+
+
     }
+
+
+
 }
 
 
@@ -97,7 +110,7 @@ fun ProductCard(product: ProductModel, onClick: (ProductModel) -> Unit) {
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(product) }
+            .clickable { onClick(product)}
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(16.dp)) {
             AsyncImage(

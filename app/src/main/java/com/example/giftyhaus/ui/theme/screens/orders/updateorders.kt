@@ -12,7 +12,7 @@ import com.example.giftyhaus.R
 
 @Composable
 fun UpdateOrderScreen(
-    orderId: String
+    productId: String
 ) {
     var orderDetails by remember { mutableStateOf("") }
     var status by remember { mutableStateOf("") }

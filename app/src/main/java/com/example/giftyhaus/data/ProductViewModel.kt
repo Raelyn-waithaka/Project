@@ -131,56 +131,74 @@ class ProductViewModel: ViewModel() {
         }
     }
 
+
+
     val categorizedProducts = mutableStateOf<Map<String, List<ProductModel>>>(emptyMap())
 
-    fun fetchProductsByCategory(
-        category: String,
-        products: SnapshotStateList<ProductModel>
+    fun viewProducts(
+        products: SnapshotStateList<ProductModel>,
+        category: String? = null
     ) {
         val ref = FirebaseDatabase.getInstance().getReference("Products")
-        ref.addValueEventListener(object : ValueEventListener {
+
+        val query = if (category.isNullOrEmpty()) {
+            ref
+        } else {
+            ref.orderByChild("category").equalTo(category)
+        }
+
+        query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 products.clear()
                 for (snap in snapshot.children) {
                     val product = snap.getValue(ProductModel::class.java)
-                    if (product != null && product.category.equals(category, ignoreCase = true)) {
+                    if (product != null) {
                         products.add(product)
                     }
-
                 }
             }
 
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                println("Database Error: ${error.message}")
+            }
         })
     }
 
 
-    fun updateOrder(context: Context, navController: NavController,
-                      items: String, totalAmount: String,
-                      date: String, status: String, orderId: String){
 
+
+    fun updateProduct(
+        context: Context,
+        navController: NavController,
+        items: String,
+        totalAmount: String,
+        date: String,
+        status: String,
+        productId: String
+    ) {
+        // Corrected the reference path
         val databaseReference = FirebaseDatabase.getInstance()
-            .getReference("Orders/$orderId")
-        val updatedOrder = OrderModel(items , totalAmount ,
-            date, status,orderId)
+            .getReference("Orders/$productId")
 
+        // Create the updated product model
+        val updatedOrder = OrderModel(items, totalAmount, date, status, productId)
+
+        // Update the database
         databaseReference.setValue(updatedOrder)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful){
-
-                    Toast.makeText(context,"Order Updated Successfully",Toast.LENGTH_LONG).show()
+                if (task.isSuccessful) {
+                    Toast.makeText(context, "Order Updated Successfully", Toast.LENGTH_LONG).show()
                     navController.navigate(ROUTE_VIEW_ORDERS)
-                }else{
-
-                    Toast.makeText(context,"Order update failed",Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(context, "Order update failed", Toast.LENGTH_LONG).show()
                 }
             }
     }
     fun deleteOrder(context: Context,orderId: String,
                     navController: NavController){
         AlertDialog.Builder(context)
-            .setTitle("Delete Order")
-            .setMessage("Are you sure you want to delete this order?")
+            .setTitle("Delete Student")
+            .setMessage("Are you sure you want to delete this student?")
             .setPositiveButton("Yes"){ _, _ ->
 
                 val databaseReference = FirebaseDatabase.getInstance()
@@ -189,9 +207,9 @@ class ProductViewModel: ViewModel() {
                         task ->
                     if (task.isSuccessful){
 
-                        Toast.makeText(context,"Order deleted Successfully",Toast.LENGTH_LONG).show()
+                        Toast.makeText(context,"Student deleted Successfully",Toast.LENGTH_LONG).show()
                     }else{
-                        Toast.makeText(context,"Order not deleted",Toast.LENGTH_LONG).show()
+                        Toast.makeText(context,"Student not deleted",Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -201,6 +219,3 @@ class ProductViewModel: ViewModel() {
             .show()
     }
 }
-
-
-

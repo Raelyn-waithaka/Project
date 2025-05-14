@@ -52,6 +52,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.giftyhaus.R
 import com.example.giftyhaus.data.ProductViewModel
+import com.example.giftyhaus.navigation.ROUTE_VIEW_ORDERS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,12 +67,13 @@ fun AddProductScreen(navController: NavController) {
     var description by remember { mutableStateOf("") }
 
     // Dropdown State
-    val categories = listOf("T-shirt", "Sneakers", "Backpack", "Accessories", "Other")
+    val categories = listOf("T-shirt", "Sneakers", "Backpack")
     var expanded by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf(categories[0]) }
 
     val context = LocalContext.current
     val productViewModel: ProductViewModel = viewModel()
+
 
     Scaffold(
         topBar = {
@@ -94,9 +96,11 @@ fun AddProductScreen(navController: NavController) {
                             name,
                             price,
                             description,
-                            selectedCategory, // Pass category here
+                            selectedCategory,
                             navController
                         )
+
+                        navController.navigate(ROUTE_VIEW_ORDERS)
                     } ?: Toast.makeText(context, "Please pick an image", Toast.LENGTH_LONG).show()
                 }
             ) {
@@ -198,4 +202,3 @@ fun AddProductScreen(navController: NavController) {
         }
     }
 }
-

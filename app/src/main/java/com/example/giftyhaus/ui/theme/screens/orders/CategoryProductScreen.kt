@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.giftyhaus.models.ProductModel
+import com.example.giftyhaus.navigation.ROUTE_VIEW_ORDERS
 import com.example.giftyhaus.ui.theme.screens.home.ProductCard
 
 @Composable
@@ -28,7 +29,7 @@ fun CategoryProductsScreen(category: String, navController: NavController) {
     val products = remember { mutableStateListOf<ProductModel>() }
 
     LaunchedEffect(category) {
-        viewModel.fetchProductsByCategory(category, products)
+        viewModel.viewProducts(products)
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
@@ -39,7 +40,9 @@ fun CategoryProductsScreen(category: String, navController: NavController) {
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 items(products.size) { index ->
-                    ProductCard(product = products[index], onClick = { /* handle click */ })
+                    ProductCard(product = products[index], onClick = { navController.navigate(
+                        ROUTE_VIEW_ORDERS
+                    ) })
                 }
             }
         }
